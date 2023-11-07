@@ -100,11 +100,19 @@ print(my_table3_filtered.table)
 
 # Find the max and min temperature in landlock EU countries
 my_table4 = my_table1.join(my_table2, 'country')
-my_table4_filtered = my_table4.filter(lambda x: x['EU'] == 'yes').filter(lambda x: x['coastline'] == 'no')
-print("max temperature : ", my_table4_filtered.aggregate(max, "temperature"))
-print("min temperature : ", my_table4_filtered.aggregate(min, "temperature"))
+for i in my_table4.filter(lambda x: x['EU'] == 'yes').filter(lambda x: x['coastline'] == 'no').select("country"):
+    my_table4_filtered = my_table4.filter(lambda x: x['country'] == i['country'])
+    print(i['country'], ", ", my_table4_filtered.select("city")[0]["city"])
+    print("max temperature : ", my_table4_filtered.aggregate(max, "temperature"))
+    print("min temperature : ", my_table4_filtered.aggregate(min, "temperature"))
 
 # Print the min and max latitude for cities in every country
 my_table5 = my_table1.join(my_table2, 'country')
-print("max latitute : ", my_table4_filtered.aggregate(max, "latitude"))
-print("min latitude : ", my_table4_filtered.aggregate(min, "latitude"))
+for i in my_table2.select('country'):
+    my_table5_filtered = my_table5.filter(lambda x:x['country'] == i['country'])
+    print(i['country'])
+    try:
+        print("max latitute : ", my_table5_filtered.aggregate(max, "latitude"))
+        print("min latitude : ", my_table5_filtered.aggregate(min, "latitude"))
+    except ValueError:
+        print(end="")
